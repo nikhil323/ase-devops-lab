@@ -14,12 +14,12 @@ jobs:
       - run: pytest -v
 
   docker:
-  runs-on: ubuntu-latest
-  steps:
-    - uses: actions/checkout@v4
-    - name: Build image
-      run: docker build -t ase-devops-lab .
-    - name: Show image size
-      run: docker image ls ase-devops-lab
-    - name: Run tests inside the container
-      run: docker run --rm ase-devops-lab
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t ase-devops-lab .
+      - name: Show image size
+        run: docker image ls ase-devops-lab
+      - name: Run tests inside the container
+        run: docker run --rm ase-devops-lab
