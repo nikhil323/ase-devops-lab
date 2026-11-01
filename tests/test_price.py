@@ -18,6 +18,8 @@ def test_price_without_cents():
 def test_price_with_currency_and_spaces():
     assert parse_price("  $89.50 CAD ") == 89.50
 
+def test_lowercase_cad():
+    assert parse_price("$50.99 cad") == 50.99
 
 def test_bad_input_raises_error():
     with pytest.raises(ValueError):
