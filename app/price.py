@@ -3,7 +3,7 @@ def parse_price(text):
     if text is None:
         raise ValueError("price is empty")
 
-    cleaned = text.strip().replace("$", "").replace("CAD", "").replace("cad", "").replace(",", "").strip()
+    cleaned = text.strip().lower().replace("$", "").replace("cad", "").replace(",", "").strip()
     if cleaned == "":
         raise ValueError("price is empty")
 
