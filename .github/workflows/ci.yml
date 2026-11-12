@@ -45,7 +45,7 @@ jobs:
         run: | 
           code=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:8000/price?text=abc")
           echo "status code: $code"
-          test "$code" = "422"
+          test "$code" = "400"
       - name: Show the API logs
         if: always()
         run: docker logs api
