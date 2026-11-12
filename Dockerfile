@@ -12,5 +12,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # copy the rest of the application code into the container
 COPY . .
 
+# the api listen on port 8000 inside the container
+EXPOSE 8000
+
 # run pytest with verbose output when the container starts
 CMD ["pytest", "-v"]

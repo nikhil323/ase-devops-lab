@@ -23,3 +23,33 @@ jobs:
         run: docker image ls ase-devops-lab
       - name: Run tests inside the container
         run: docker run --rm ase-devops-lab
+      - name: Start the API in the background
+        run: docker run -d --name api -p 8000:8000 ase-devops-lab uvicorn app.main:app --host 0.0.0.0 --port 8000
+      - name: Wait for the API answers
+        run:  |
+          for i in ${seq 1 20}; do
+            if curl -s http://localhost:8000/docs > /dev/null; then
+              echo "API is up after about $i seconds"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "API did not answer within 20 seconds"
+          exit 1
+      - name: "Smoke test 1: a good price"
+        run: |
+          response=$(curl -s --fail "http://localhost:8000/price?text=%2450.99")
+          echo "$response"
+          echo " $respsonse" | grep -q '"price":50.99'
+      - name: "Smoke test 2: text that is not a price"
+        run: | 
+          code=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:8000/price?text=abc")
+          echo "status code: $code"
+          test "$code" = "422"
+      - name: Show the API logs
+        if: always()
+        run: docker logs api
+
+      - name: Stop the API
+        if: always()
+        run: docker stop api
