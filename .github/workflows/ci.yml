@@ -40,7 +40,7 @@ jobs:
         run: |
           response=$(curl -s --fail "http://localhost:8000/price?text=%2450.99")
           echo "$response"
-          echo " $respsonse" | grep -q '"price":50.99'
+          echo " $response" | grep -q '"price":50.99'
       - name: "Smoke test 2: text that is not a price"
         run: | 
           code=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:8000/price?text=abc")
