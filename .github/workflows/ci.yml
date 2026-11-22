@@ -54,7 +54,7 @@ jobs:
         if: always()
         run: docker stop api
       
-    push-ecr:
+  push-ecr:
     needs: docker
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
