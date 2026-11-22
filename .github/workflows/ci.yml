@@ -53,3 +53,36 @@ jobs:
       - name: Stop the API
         if: always()
         run: docker stop api
+      
+    push-ecr:
+    needs: docker
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    env:
+      AWS_REGION: us-east-1
+      ECR_REPOSITORY: ase-devops-lab
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sign in to AWS with the IAM user's keys
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Log in to Amazon ECR
+        id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and tag the image
+        run: docker build -t ${{ steps.ecr.outputs.registry }}/$ECR_REPOSITORY:${{ github.sha }} .
+
+      - name: Push the image to ECR
+        run: docker push ${{ steps.ecr.outputs.registry }}/$ECR_REPOSITORY:${{ github.sha }}
+
+      - name: Show the size ECR stored
+        run: |
+          aws ecr describe-images --repository-name $ECR_REPOSITORY \
+            --image-ids imageTag=${{ github.sha }} \
+            --query 'imageDetails[0].imageSizeInBytes'
