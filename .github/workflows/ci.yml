@@ -22,7 +22,7 @@ jobs:
       - name: Show image size
         run: docker image ls ase-devops-lab
       - name: Run tests inside the container
-        run: docker run --rm ase-devops-lab
+        run: docker run --rm ase-devops-lab pytest -v
       - name: Start the API in the background
         run: docker run -d --name api -p 8000:8000 ase-devops-lab uvicorn app.main:app --host 0.0.0.0 --port 8000
       - name: Wait for the API answers
@@ -76,7 +76,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build and tag the image
-        run: docker build -t ${{ steps.ecr.outputs.registry }}/$ECR_REPOSITORY:${{ github.sha }} .
+        run: docker build --provenance=false -t ${{ steps.ecr.outputs.registry }}/$ECR_REPOSITORY:${{ github.sha }} .
 
       - name: Push the image to ECR
         run: docker push ${{ steps.ecr.outputs.registry }}/$ECR_REPOSITORY:${{ github.sha }}
